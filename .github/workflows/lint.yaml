@@ -3,7 +3,11 @@ name: Lint
 on:
   push:
     branches:
-      - pep8-style
+      - improve-doc-coverage
+  pull_request:
+    branches:
+      - development
+      - master
 
 jobs:
   flake8:
