@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - improve-doc-coverage
+      - development
+      - master
   pull_request:
     branches:
       - development
@@ -41,6 +43,7 @@ jobs:
       run: |
         make black-check
   pydocstyle:
+    if: true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -56,6 +59,7 @@ jobs:
       run: |
         make pydocstyle-check
   darglint:
+    if: true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
