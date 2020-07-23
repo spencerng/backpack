@@ -96,7 +96,7 @@ def hook_store_shapes(module, input, output):
     """
 
     for i in range(len(input)):
-        if input[i] is None or (*input[i]) is None:
+        if input[i] is None:
             continue
         try:
             module.register_buffer(
@@ -106,7 +106,7 @@ def hook_store_shapes(module, input, output):
             module.register_buffer(
                 "input{}_shape".format(i), torch.IntTensor([input[i]])
             )
-    if output is None or (*output) is None:
+    if output is None:
         return
     try:
         module.register_buffer("output_shape", torch.IntTensor([*output.size()]))
