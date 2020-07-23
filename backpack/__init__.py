@@ -96,6 +96,8 @@ def hook_store_shapes(module, input, output):
     """
 
     for i in range(len(input)):
+        if input[i] is None or (*input[i]) is None:
+            continue
         try:
             module.register_buffer(
                 "input{}_shape".format(i), torch.IntTensor([*input[i].size()])
@@ -104,6 +106,8 @@ def hook_store_shapes(module, input, output):
             module.register_buffer(
                 "input{}_shape".format(i), torch.IntTensor([input[i]])
             )
+    if output is None or (*output) is None:
+        return
     try:
         module.register_buffer("output_shape", torch.IntTensor([*output.size()]))
     except AttributeError:
@@ -153,11 +157,9 @@ def extend(module: torch.nn.Module, debug=False):
     """
     if debug:
         print("[DEBUG] Extending", module)
-    
 
     for child in module.children():
         extend(child, debug=debug)
-
 
     module_was_already_extended = getattr(module, "_backpack_extend", False)
     if not module_was_already_extended:
