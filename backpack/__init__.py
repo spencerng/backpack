@@ -94,11 +94,20 @@ def hook_store_shapes(module, input, output):
         input: List of input tensors shapes
         output: output tensor shape
     """
+
     for i in range(len(input)):
-        module.register_buffer(
-            "input{}_shape".format(i), torch.IntTensor([*input[i].size()])
-        )
-    module.register_buffer("output_shape", torch.IntTensor([*output.size()]))
+        try:
+            module.register_buffer(
+                "input{}_shape".format(i), torch.IntTensor([*input[i].size()])
+            )
+        except AttributeError:
+            module.register_buffer(
+                "input{}_shape".format(i), torch.IntTensor([input[i]])
+            )
+    try:
+        module.register_buffer("output_shape", torch.IntTensor([*output.size()]))
+    except AttributeError:
+        module.register_buffer("output_shape", torch.IntTensor([len(output)]))
 
 
 def memory_cleanup(module):
@@ -144,9 +153,11 @@ def extend(module: torch.nn.Module, debug=False):
     """
     if debug:
         print("[DEBUG] Extending", module)
+    
 
     for child in module.children():
         extend(child, debug=debug)
+
 
     module_was_already_extended = getattr(module, "_backpack_extend", False)
     if not module_was_already_extended:
